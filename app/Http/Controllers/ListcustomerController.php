@@ -43,6 +43,7 @@ class ListCustomerController extends Controller
 
     public function update(Request $request,$id)
     {
+        //fungsi update data
         $customer = Customer::find($id);
         // $customer->update($request->all());
         $customer                   = customer::find($id);
