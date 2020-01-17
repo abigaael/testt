@@ -49,6 +49,7 @@ class ListmobilController extends Controller
         $mobil->warna       = $request->input('warna');
         $mobil->harga_sewa  = $request->input('harga_sewa');
         // $mobil->update($request->all());
+        $mobil->update();
         return redirect('/mobil')->with('sukses','Data updated successfully'); 
     }
 
@@ -57,6 +58,17 @@ class ListmobilController extends Controller
         $mobil = Mobil::find($id);
         $mobil->delete($mobil);
         return redirect('/mobil')->with('sukses','Data has been deleted'); 
+    }
+
+    public function uniquecarcode(Request $request){
+        $kode_mobil = $request->input('kode_mobil');
+        $check = Mobil::where('kode_mobil', $kode_mobil)->count();
+
+        if ($check > 0) {
+            echo "false";
+        } else {
+            echo "true";
+        }
     }
 }
 

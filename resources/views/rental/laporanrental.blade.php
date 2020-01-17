@@ -1,21 +1,27 @@
  @extends('layouts.newapp')
  @push('style')
- <link href="{{asset('template/assets/plugins/jquery-datatable/media/css/dataTables.bootstrap.min.css')}}" rel="stylesheet" type="text/css" />
-<link href="{{asset('template/assets/plugins/jquery-datatable/extensions/FixedColumns/css/dataTables.fixedColumns.min.css')}}" rel="stylesheet" type="text/css" />
-<link href="{{asset('template/assets/plugins/datatables-responsive/css/datatables.responsive.css')}}" rel="stylesheet" type="text/css" media="screen" />
-<link href="{{ asset('template/assets/plugins/bootstrap-datepicker/css/datepicker3.css') }}" rel="stylesheet" type="text/css" media="screen">
-<style type="text/css">
-  tfoot {
-      display: table-header-group;
+  <link href="{{asset('template/assets/plugins/jquery-datatable/media/css/dataTables.bootstrap.min.css')}}" rel="stylesheet" type="text/css" />
+  <link href="{{asset('template/assets/plugins/jquery-datatable/extensions/FixedColumns/css/dataTables.fixedColumns.min.css')}}" rel="stylesheet" type="text/css" />
+  <link href="{{asset('template/assets/plugins/datatables-responsive/css/datatables.responsive.css')}}" rel="stylesheet" type="text/css" media="screen" />
+  <link href="{{ asset('template/assets/plugins/bootstrap-datepicker/css/datepicker3.css') }}" rel="stylesheet" type="text/css" media="screen">
+  <style type="text/css">
+    tfoot {
+        display: table-header-group;
+    }
+    .form-group.required label:after {
+      content:"*";
+      color:red;
   }
-</style>
+  </style>
  @endpush
+
  @section('content')
    @if(session('sukses'))
     <div class="alert alert-success" role="alert">
       {{session('success')}}
     </div>
  @endif
+
  <div class="page-content-wrapper ">
         <!-- START PAGE CONTENT -->
         <div class="content ">
@@ -30,11 +36,11 @@
                 </div>
                 <div class="modal-body">
                   <p class="small-text">Masukkan data</p>
-                  <form role="form" action="{{ url('/rental/create') }}" method="post">
+                  <form role="form" id="form-createrental" action="{{ url('/rental/create') }}" method="post">
                   {{csrf_field()}}
                     <div class="row">
                       <div class="col-sm-12">
-                        <div class="form-group form-group-default">
+                        <div class="form-group form-group-default required">
                           <label>No Transaksi</label>
                           <input name="no_transaksi" type="text" class="form-control" placeholder="Masukkan no transaksi">
                         </div>
@@ -42,7 +48,7 @@
                     </div>
                      <div class="row">
                       <div class="col-sm-12">
-                        <div class="form-group form-group-default">
+                        <div class="form-group form-group-default required">
                           <label>Nama Customer</label>
                           <select name="nama_customer" class="form-control">
                             <option>Pilih Customer</option>
@@ -57,7 +63,7 @@
                     </div>
                       <div class="row">
                        <div class="col-sm-12">
-                        <div class="form-group form-group-default">
+                        <div class="form-group form-group-default required">
                           <label>Nama Mobil</label>
                           <select name="car_name" class="form-control">
                             <option>Pilih mobil</option>
@@ -88,7 +94,7 @@
                     <!-- </div> --> 
                      <div class="row">
                       <div class="col-sm-12">
-                        <div class="form-group form-group-default">
+                        <div class="form-group form-group-default required">
                           <label>Tanggal Rental</label>
                           <input name="tgl_rental" type="text" class="form-control" placeholder="Masukkan tanggal rental">  
                         </div>
@@ -96,7 +102,7 @@
                     </div>
                      <div class="row">
                       <div class="col-sm-12">
-                        <div class="form-group form-group-default">
+                        <div class="form-group form-group-default required">
                           <label>Tanggal Kembali</label>
                           <input name="tgl_kembali" type="text" class="form-control" placeholder="Masukkan tanggal kembali">  
                         </div>
@@ -104,9 +110,9 @@
                     </div>
                     <div class="row">
                       <div class="col-sm-12">
-                        <div class="form-group form-group-default">
+                        <div class="form-group form-group-default required">
                           <label>Harga sewa</label>
-                          <input name="harga_sewa" type="text" class="form-control" placeholder="Masukkan harga sewa">  
+                          <input name="harga_sewa" type="text" class="form-control" placeholder="Masukkan harga sewa" onkeypress="validateOnlyNumber(event);">  
                         </div>
                       </div>
                     </div>
@@ -178,7 +184,7 @@
                     @foreach($data_rental as $rental)
                     <tr>
                       <td>{{$rental->no_transaksi}}</td>
-                      <td>{{$rental->customer->nama_customer}}</td>
+                      <td>{{ $rental->customer ? $rental->customer->nama_customer : '-' }}</td>
                       <td>{{$rental->mobil->car_name}}</td>
                       <td>{{$rental->mobil->kode_mobil}}</td>
                       <td>{{$rental->mobil->no_polisi}}</td>
@@ -209,6 +215,7 @@
     <script type="text/javascript" src="{{asset('template/assets/plugins/datatables-responsive/js/lodash.min.js')}}"></script>
     <script src="{{asset('template/assets/js/datatables.js')}}" type="text/javascript"></script>
     <script src="{{ asset('template/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('template/assets/plugins/jquery-validation/js/jquery.validate.min.js') }}" type="text/javascript"></script>
 
     <script type="text/javascript">
 
@@ -242,7 +249,46 @@
             format: "yyyy-mm-dd"
           });
 
+          $("#form-createrental").validate({
+            rules: {
+              no_transaksi: {
+                    required:true,
+                    remote:{
+                              url:"{{ ('/transaction') }}",
+                              type:"get",
+                    },
+              },
+              nama_customer:"required",
+              car_name:"required",
+              tgl_rental:"required",
+              tgl_kembali:"required",
+              harga_sewa:"required",
+            },
+            messages: {
+              no_transaksi: {
+                  required:"Please enter your transaction number",
+                  remote:"Please input another transaction number",
+              },
+              car_name: "Please enter your car name",
+              nama_customer: "Please enter name customer",
+              tgl_rental: "Please enter your rental date",
+              tgl_kembali: "Please enter your back date",
+              harga_sewa: "Please enter price",
+            }
+          });
+
       } );
+      function validateOnlyNumber(evt) {
+        var theEvent = evt || window.event;
+        var key = theEvent.keyCode || theEvent.which;
+        key = String.fromCharCode( key );
+        var regex = /[0-9\b]|\./;
+         
+        if( !regex.test(key) ) {
+          theEvent.returnValue = false;
+          if(theEvent.preventDefault) theEvent.preventDefault();
+          }
+      }
 
     </script>
 @endpush

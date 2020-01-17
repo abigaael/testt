@@ -63,4 +63,26 @@ class ListCustomerController extends Controller
         $customer->delete($customer);
         return redirect('/customer')->with('sukses','Data has been deleted'); 
     }
+
+    public function uniquecust(Request $request){
+        $kode_customer = $request->input('kode_customer');
+        $check = Customer::where('kode_customer', $kode_customer)->count();
+
+        if ($check > 0) {
+            echo "false";
+        } else {
+            echo "true";
+        }
+    }
+
+    public function emailunique(Request $request){
+        $email = $request->input('email');
+        $check = Customer::where('email', $email)->count();
+
+        if ($check > 0) {
+            echo "false";
+        } else {
+            echo "true";
+        }
+    }
 }

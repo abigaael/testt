@@ -7,7 +7,12 @@
   tfoot {
       display: table-header-group;
   }
+  .form-group.required label:after {
+    content:"*";
+    color:red;
+}
 </style>
+
  @endpush
  @section('content')
    @if(session('sukses'))
@@ -29,19 +34,19 @@
                 </div>
                 <div class="modal-body">
                   <p class="small-text">Masukkan data</p>
-                  <form role="form" action="{{ url('/mobil/create') }}" method="post">
+                  <form role="form" id="form-createmobil" action="{{ url('/mobil/create') }}" method="post" novalidate="novalidate">
                   {{csrf_field()}}
                     <div class="row">
                       <div class="col-sm-12">
-                        <div class="form-group form-group-default">
+                        <div class="form-group form-group-default required">
                           <label>Kode</label>
-                          <input name="kode_mobil" type="text" class="form-control" placeholder="Masukkan kode">
+                          <input name="kode_mobil" type="text" class="form-control" placeholder="Masukkan kode" autocomplete="off">
                         </div>
                       </div>
                     </div>
                      <div class="row">
                       <div class="col-sm-12">
-                        <div class="form-group form-group-default">
+                        <div class="form-group form-group-default required">
                           <label>Nama Mobil</label>
                           <input name="car_name" type="text" class="form-control" placeholder="Masukkan nama mobil">
                         </div>
@@ -49,7 +54,7 @@
                     </div>
                       <div class="row">
                        <div class="col-sm-12">
-                        <div class="form-group form-group-default">
+                        <div class="form-group form-group-default required">
                           <label>Nomor polisi</label>
                           <input name="no_polisi" type="text" class="form-control" placeholder="Masukkan nomor polisi">
                         </div>
@@ -57,7 +62,7 @@
                     </div>
                      <div class="row">
                       <div class="col-sm-12">
-                        <div class="form-group form-group-default">
+                        <div class="form-group form-group-default required">
                           <label>Brand</label>
                           <input name="brand" type="text" class="form-control" placeholder="Masukkan brand">
                         </div>
@@ -65,7 +70,7 @@
                     </div>
                      <div class="row">
                       <div class="col-sm-12">
-                        <div class="form-group form-group-default">
+                        <div class="form-group form-group-default required">
                           <label>Type</label>
                           <input name="type" type="text" class="form-control" placeholder="Masukkan type mobil">
                         </div>
@@ -73,7 +78,7 @@
                     </div>
                      <div class="row">
                       <div class="col-sm-12">
-                        <div class="form-group form-group-default">
+                        <div class="form-group form-group-default required">
                           <label>Warna</label>
                           <input name="warna" type="text" class="form-control" placeholder="Masukkan warna mobil">  
                         </div>
@@ -81,9 +86,9 @@
                     </div>
                     <div class="row">
                       <div class="col-sm-12">
-                        <div class="form-group form-group-default">
+                        <div class="form-group form-group-default required">
                           <label>Harga sewa</label>
-                          <input name="harga_sewa" type="text" class="form-control" placeholder="Masukkan harga sewa">  
+                          <input name="harga_sewa" type="text" class="form-control" placeholder="Masukkan harga sewa" onkeypress="validateOnlyNumber(event);">  
                         </div>
                       </div>
                     </div>
@@ -182,6 +187,7 @@
     <script type="text/javascript" src="{{asset('template/assets/plugins/datatables-responsive/js/datatables.responsive.js')}}"></script>
     <script type="text/javascript" src="{{asset('template/assets/plugins/datatables-responsive/js/lodash.min.js')}}"></script>
     <script src="{{asset('template/assets/js/datatables.js')}}" type="text/javascript"></script>
+    <script src="{{ asset('template/assets/plugins/jquery-validation/js/jquery.validate.min.js') }}" type="text/javascript"></script>
 
     <script type="text/javascript">
 
@@ -207,7 +213,51 @@
                   }
               } );
           } );
+
+          $("#form-createmobil").validate({
+            rules: {
+              kode_mobil: {
+                  required: true,
+                  remote : {
+                              url: "{{ url('/uniquecarcode') }}",
+                              type: "get",
+                  },
+              },
+              car_name:"required",
+              no_polisi:"required",
+              brand:"required",
+              type:"required",
+              warna:"required",
+              harga_sewa:"required",
+            },
+            messages: {
+              kode_mobil: {
+                  required: "Please enter your code",
+                  remote:"Please input another code",
+              },
+              car_name: "Please enter your car name",
+              no_polisi: "Please enter your license",
+              brand: "Please enter your brand",
+              type: "Please enter your type",
+              warna: "Please enter your color car",
+              harga_sewa: "Please enter price",
+            }
+          });
+
+
       } );
+
+      function validateOnlyNumber(evt) {
+        var theEvent = evt || window.event;
+        var key = theEvent.keyCode || theEvent.which;
+        key = String.fromCharCode( key );
+        var regex = /[0-9\b]|\./;
+         
+        if( !regex.test(key) ) {
+          theEvent.returnValue = false;
+          if(theEvent.preventDefault) theEvent.preventDefault();
+          }
+      }
 
     </script>
 @endpush

@@ -82,7 +82,7 @@
               <span class="title">Rent</span>
               
             </a>
-            <span class="icon-thumbnail">C</span>
+            <span class="icon-thumbnail">R</span>
           </li>
           
           <li class="">

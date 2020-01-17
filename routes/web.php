@@ -26,16 +26,21 @@ Route::post('/mobil/create','ListmobilController@create');
 Route::get('/mobil/{id}/edit','ListmobilController@edit');
 Route::post('/mobil/{id}/update','ListmobilController@update'); 
 Route::get('/mobil/{id}/delete','ListmobilController@delete');
+Route::get('/uniquecarcode', 'ListmobilController@uniquecarcode')->name('code');
+
 
 Route::post('/customer/create','ListcustomerController@create');
 Route::get('/customer/{id}/edit','ListcustomerController@edit');
 Route::post('/customer/{id}/update','ListcustomerController@update');
 Route::get('/customer/{id}/delete','ListcustomerController@delete');
+Route::get('/uniquecust', 'ListcustomerController@uniquecust')->name('cust');
+Route::get('/emailunique', 'ListcustomerController@emailunique')->name('emailcust');
 
 Route::post('/rental/create','LaporanrentalController@create');
 Route::get('/rental/{id}/edit','LaporanrentalController@edit');
 Route::post('/rental/{id}/update','LaporanrentalController@update');
 Route::get('/rental/{id}/delete','LaporanrentalController@delete');
+Route::get('/transaction','LaporanrentalController@transaction')->name('notrans');
 
 
 

@@ -9,8 +9,8 @@
 			<tr>
 				<th>Kode</th>
 				<th>Nama Customer</th>
-				<th>Email</th>
-				<th>No Hp</th>
+				<th>Email</th
+>				<th>No Hp</th>
 				<th>Jenis Kelamin</th>
 				<th>Alamat</th>
 			</tr>

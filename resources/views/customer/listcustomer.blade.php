@@ -1,20 +1,25 @@
- @extends('layouts.newapp')
- @push('style')
- <link href="{{asset('template/assets/plugins/jquery-datatable/media/css/dataTables.bootstrap.min.css')}}" rel="stylesheet" type="text/css" />
-<link href="{{asset('template/assets/plugins/jquery-datatable/extensions/FixedColumns/css/dataTables.fixedColumns.min.css')}}" rel="stylesheet" type="text/css" />
-<link href="{{asset('template/assets/plugins/datatables-responsive/css/datatables.responsive.css')}}" rel="stylesheet" type="text/css" media="screen" />
-<style type="text/css">
-  tfoot {
-      display: table-header-group;
-  }
-</style>
+@extends('layouts.newapp')
+@push('style')
+    <link href="{{asset('template/assets/plugins/jquery-datatable/media/css/dataTables.bootstrap.min.css')}}" rel="stylesheet" type="text/css" />
+    <link href="{{asset('template/assets/plugins/jquery-datatable/extensions/FixedColumns/css/dataTables.fixedColumns.min.css')}}" rel="stylesheet" type="text/css" />
+    <link href="{{asset('template/assets/plugins/datatables-responsive/css/datatables.responsive.css')}}" rel="stylesheet" type="text/css" media="screen" />
+    <style type="text/css">
+      tfoot {
+          display: table-header-group;
+      }
+      .form-group.required label:after {
+        content:"*";
+        color:red;
+    }
+    </style>
  @endpush
+
  @section('content')
    @if(session('sukses'))
     <div class="alert alert-success" role="alert">
       {{session('success')}}
     </div>
- @endif
+   @endif
  <div class="page-content-wrapper ">
         <!-- START PAGE CONTENT -->
         <div class="content ">
@@ -29,11 +34,11 @@
                 </div>
                 <div class="modal-body">
                   <p class="small-text">Masukkan data</p>
-                  <form role="form" action="{{ url('/customer/create') }}" method="post">
+                  <form role="form" id="form-createcustomer" action="{{ url('/customer/create') }}" method="post">
                   {{csrf_field()}}
                     <div class="row">
                       <div class="col-sm-12">
-                        <div class="form-group form-group-default">
+                        <div class="form-group form-group-default required">
                           <label>Nama Customer</label>
                           <input name="nama_customer" type="text" class="form-control" placeholder="Masukkan Nama Customer">
                         </div>
@@ -41,7 +46,7 @@
                     </div>
                     <div class="row">
                       <div class="col-sm-12">
-                        <div class="form-group form-group-default">
+                        <div class="form-group form-group-default required">
                           <label>Email</label>
                           <input name="email" type="text" class="form-control" placeholder="Masukkan Email">
                         </div>
@@ -49,7 +54,7 @@
                     </div>
                      <div class="row">
                       <div class="col-sm-12">
-                        <div class="form-group form-group-default">
+                        <div class="form-group form-group-default required">
                           <label>Jenis Kelamin</label>
                           <input type="radio" name="jenis_kelamin" value="L"> Laki-laki<br>
                           <input type="radio" name="jenis_kelamin" value="P"> Perempuan<br>
@@ -58,7 +63,7 @@
                     </div>
                       <div class="row">
                        <div class="col-sm-12">
-                        <div class="form-group form-group-default">
+                        <div class="form-group form-group-default required">
                           <label>Alamat</label>
                           <input name="alamat" type="text" class="form-control" placeholder="Masukkan Alamat">
                         </div>
@@ -66,15 +71,16 @@
                     </div>
                      <div class="row">
                       <div class="col-sm-12">
-                        <div class="form-group form-group-default">
+                        <div class="form-group form-group-default required">
                           <label>No Handphone</label>
-                          <input name="no_hp" type="text" class="form-control" placeholder="Masukkan no handphone">
+                          <input name="no_hp" type="number" class="form-control" placeholder="Masukkan no handphone">
+                          <span class="no_hp-error error-custom" style="color: red; font-size: 11px;">Mobile number of at least 13 digits</span>
                         </div>
                       </div>
                     </div>
                      <div class="row">
                       <div class="col-sm-12">
-                        <div class="form-group form-group-default">
+                        <div class="form-group form-group-default required">
                           <label>Kode Customer</label>
                           <input name="kode_customer" type="text" class="form-control" placeholder="Masukkan Kode Customer">
                         </div>
@@ -178,6 +184,7 @@
     <script type="text/javascript" src="{{asset('template/assets/plugins/datatables-responsive/js/datatables.responsive.js')}}"></script>
     <script type="text/javascript" src="{{asset('template/assets/plugins/datatables-responsive/js/lodash.min.js')}}"></script>
     <script src="{{asset('template/assets/js/datatables.js')}}" type="text/javascript"></script>
+    <script src="{{ asset('template/assets/plugins/jquery-validation/js/jquery.validate.min.js') }}" type="text/javascript"></script>
 
     <script type="text/javascript">
 
@@ -203,6 +210,45 @@
                   }
               } );
           } );
+
+          $("#form-createcustomer").validate({
+            rules: {
+              email:{
+                    required: true,
+                    remote: {
+                              url:"{{ url('/emailunique') }}",
+                              type:"get",
+                    },
+              }, 
+              nama_customer: "required",
+              jenis_kelamin:"required",
+              alamat:"required",
+              no_hp:"required",
+              kode_customer:{
+                  required: true,
+                  remote: {
+                            url:"{{ url('/uniquecust') }}",
+                            type:"get",
+                  },
+              },
+            },
+            messages: {
+              nama_customer: "custom message validation",
+              email: {
+                    required:"Please enter your email address to contact you",
+                    email:"Your email address must be in the format of name @",
+                    remote:"The email you entered is already in use"
+              },
+              jenis_kelamin: "custom message validation",
+              alamat: "custom message validation",
+              no_hp: "custom message validation",
+              kode_customer: {
+                    required: "Please input customer code",
+                    remote: "Please input another code",
+              },
+            }
+          });
+
       } );
 
     </script>

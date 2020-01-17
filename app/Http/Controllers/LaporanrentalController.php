@@ -63,5 +63,15 @@ class LaporanrentalController extends Controller
         $rental->delete($rental);
         return redirect('/rental')->with('sukses','Data has been deleted'); 
     }
+    public function transaction(Request $request){
+        $no_transaksi = $request->input('no_transaksi');
+        $check = Rental::where('no_transaksi', $no_transaksi)->count();
+
+        if ($check > 0) {
+            echo "false";
+        } else {
+            echo "true";
+        }
+    }
 
 }
